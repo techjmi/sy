@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Post Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1 th:text="${post.title}"></h1>
+<p>Author:<span th:text="${post.author}"></span></p>
+<p>Published At:<span th:text="${post.publishedAt}"></span></p>
+
+<h3>Tags:</h3>
+<span
+        th:each="tag : ${post.tags}"
+        th:text="${tag.name + ' '}">
+</span>
+
+<div class="post-content" th:text="${post.content}"> </div>
+<!--<div th:text="${post.content}"></div>-->
+
+<a th:href="@{/posts}">Back To Posts</a>
+<a th:href="@{/posts/edit/{id}(id=${post.postId})}">Edit</a>
+
+<hr>
+
+<form th:action="@{/posts/{id}/comments(id=${post.postId})}" method="post">
+
+    <!-- Show Name and Email only for anonymous users -->
+    <div th:unless="${#authorization.expression('isAuthenticated()')}">
+        <div>
+            <label>Name</label>
+            <input type="text" name="name">
+        </div>
+        <br>
+        <div>
+            <label>Email</label>
+            <input type="email" name="email">
+        </div>
+        <br>
+    </div>
+    <div>
+        <label>Comment</label>
+        <textarea name="comment"></textarea>
+    </div>
+    <br>
+    <button type="submit">Add Comment</button>
+</form>
+
+<hr>
+
+<h2>Comments</h2>
+<div class="comment-card" th:each="comment : ${post.commentList}">
+    <p>
+        <strong th:text="${comment.name}">
+        </strong>
+    </p>
+
+    <p th:text="${comment.comment}">
+    </p>
+
+    <a th:href="@{/comments/edit/{id}(id=${comment.commentId})}">
+        Edit
+    </a>
+
+    <h2>Add Comment</h2>
+    <form th:action="@{/comments/delete/{id}(id=${comment.commentId})}"
+          method="post"
+          style="display:inline">
+
+        <button type="submit">
+            Delete
+        </button>
+
+    </form>
+
+    <hr>
+
+</div>
+
+</body>
+</html>

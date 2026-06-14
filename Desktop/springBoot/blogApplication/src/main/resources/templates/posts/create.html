@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Post</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Create Post</h1>
+<form th:action="@{/posts}" th:object="${post}" method="post">
+    <div>
+        <label>Title</label>
+        <input type="text" th:field="*{title}">
+    </div>
+    <br>
+    <div>
+        <label>Excerpt</label>
+        <textarea th:field="*{excerpt}">
+        </textarea>
+    </div>
+    <br>
+    <div>
+        <label>Content</label>
+        <textarea rows="10" cols="50" th:field="*{content}">
+        </textarea>
+    </div>
+    <br>
+
+    <div th:if="${#authorization.expression('hasRole(''AUTHOR'')')}">
+        <label>Author</label>
+        <input type="text"
+               th:value="${#authentication.name}"
+               readonly>
+    </div>
+
+    <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+        <label>Author</label>
+        <input type="text"
+               th:field="*{author}">
+    </div>
+    <br>
+
+    <!-- This tagIds should match with controller -->
+    <!--id will be displayed in dropdown and value will be received in controller-->
+
+    <div>
+        <label>Tags</label>
+        <select multiple name="tagIds">
+            <option
+                    th:each="tag:${allTags}"
+                    th:value="${tag.tagId}"
+                    th:text="${tag.name}">
+            </option>
+        </select>
+    </div>
+    <br>
+
+    <div>
+        <label>Published?</label>
+        <input type="checkbox" th:field="*{isPublished}">
+    </div>
+    <br>
+    <button type="submit">Save Post</button>
+</form>
+<br>
+<a th:href="@{/posts}">Back</a>
+</body>
+</html>

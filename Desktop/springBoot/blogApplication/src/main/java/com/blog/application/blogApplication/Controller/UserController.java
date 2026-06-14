@@ -1,0 +1,8 @@
+package com.blog.application.blogApplication.Controller;
+
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class UserController {
+
+}

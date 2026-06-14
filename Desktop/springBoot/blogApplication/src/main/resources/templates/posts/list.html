@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Posts</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<h1>Blog Posts</h1>
+
+<!-- Create Post visible only to ADMIN and AUTHOR -->
+<div th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''AUTHOR'')')}">
+    <a th:href="@{/posts/new}">Create New Post</a>
+</div>
+
+<hr>
+
+<div class="filters">
+
+    <form th:action="@{/posts}" method="get">
+
+        <input
+                type="text"
+                name="search"
+                placeholder="Search"
+                th:value="${param.search}">
+
+        <input
+                type="text"
+                name="author"
+                placeholder="Author"
+                th:value="${param.author}">
+
+        <input
+                type="date"
+                name="publishedDate"
+                th:value="${param.publishedDate}">
+
+        <select name="tagId">
+
+            <option value="">
+                All Tags
+            </option>
+
+            <option
+                    th:each="tag : ${allTags}"
+                    th:value="${tag.tagId}"
+                    th:text="${tag.name}"
+                    th:selected="${param.tagId != null and param.tagId[0] == tag.tagId.toString()}">
+            </option>
+
+        </select>
+
+        <select name="order">
+
+            <option value="">
+                Sort
+            </option>
+
+            <option value="asc">
+                Oldest First
+            </option>
+
+            <option value="desc">
+                Newest First
+            </option>
+
+        </select>
+
+        <input
+                type="hidden"
+                name="sortField"
+                value="publishedAt">
+
+        <button type="submit">
+            Apply Filter
+        </button>
+
+    </form>
+
+</div>
+
+<hr>
+
+<!-- Posts -->
+
+<div class="post-card" th:each="post : ${posts.content}">
+
+    <h2 th:text="${post.title}"></h2>
+
+    <p>
+        Author:
+        <span th:text="${post.author}"></span>
+    </p>
+
+    <p>
+        Published:
+        <span th:text="${post.publishedAt}"></span>
+    </p>
+
+    <p th:text="${post.excerpt}"></p>
+
+    <p>Tags:</p>
+
+    <div class="tags">
+        <span class="tag"
+              th:each="tag : ${post.tags}"
+              th:text="${tag.name}">
+        </span>
+    </div>
+
+    <!-- Everyone can read -->
+    <a th:href="@{/posts/{id}(id=${post.postId})}">
+        Read More
+    </a>
+
+    <!-- Only ADMIN/AUTHOR can edit/delete -->
+    <div th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''AUTHOR'')')}">
+
+        <a th:href="@{/posts/edit/{id}(id=${post.postId})}">
+            Edit
+        </a>
+
+        <form th:action="@{/posts/delete/{id}(id=${post.postId})}"
+              method="post"
+              style="display:inline">
+
+            <button type="submit">
+                Delete
+            </button>
+
+        </form>
+
+    </div>
+
+    <hr>
+
+</div>
+
+<!-- Pagination -->
+
+<div class="pagination">
+
+    <a th:if="${posts.hasPrevious()}"
+       th:href="@{/posts(
+        pageNo=${posts.number},
+        pageSize=10,
+        search=${param.search},
+        author=${param.author},
+        tagId=${param.tagId},
+        publishedDate=${param.publishedDate},
+        order=${param.order}
+   )}">
+        Previous
+    </a>
+
+    Page
+    <span th:text="${posts.number + 1}"></span>
+    of
+    <span th:text="${posts.totalPages}"></span>
+
+    <a th:if="${posts.hasNext()}"
+       th:href="@{/posts(
+        pageNo=${posts.number + 2},
+        pageSize=10,
+        search=${param.search},
+        author=${param.author},
+        tagId=${param.tagId},
+        publishedDate=${param.publishedDate},
+        order=${param.order}
+   )}">
+        Next
+    </a>
+
+</div>
+
+</body>
+</html>

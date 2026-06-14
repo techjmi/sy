@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Tag</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<h1>Edit Tag</h1>
+
+<form th:action="@{/tags/update/{id}(id=${tag.tagId})}" th:object="${tag}" method="post">
+    <label>Tag Name</label>
+    <input type="text" th:field="*{name}">
+    <br>
+    <button type="submit">Update</button>
+</form>
+
+<a th:href="@{/tags}">Back</a>
+
+</body>
+</html>

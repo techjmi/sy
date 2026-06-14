@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tags</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<h1>Tags</h1>
+
+<a th:href="@{/tags/new}">Create Tag</a>
+
+<hr>
+
+<div class="post-card"
+     th:each="tag : ${tags}">
+
+    <h3 th:text="${tag.name}">
+    </h3>
+
+    <a th:href="@{/tags/edit/{id}(id=${tag.tagId})}">
+        Edit
+    </a>
+
+    <form th:action="@{/tags/delete/{id}(id=${tag.tagId})}"
+          method="post"
+          style="display:inline">
+
+        <button type="submit">
+            Delete
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
